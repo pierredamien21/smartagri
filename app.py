@@ -24,20 +24,34 @@ def load_models():
     Charge les deux modèles Keras au démarrage.
     Les fichiers doivent être dans le même dossier que app.py :
         cnn_best.keras        → Manioc
-        cnn_simple_best.keras → Maïs
+        cnn_simple_best.keras (ou variantes) → Maïs
     """
     import keras
     import tensorflow as tf
 
     base = os.path.dirname(os.path.abspath(__file__))
     path_manioc = os.path.join(base, "cnn_best.keras")
-    path_mais   = os.path.join(base, "cnn_simple_best.keras")
+
+    maize_candidates = [
+        "cnn_simple_best.keras",
+        "cnn_best (1).keras",
+        "cnn_best(1).keras",
+        "cnn_best.keras",
+    ]
+    path_mais = None
+    for filename in maize_candidates:
+        candidate = os.path.join(base, filename)
+        if os.path.exists(candidate):
+            path_mais = candidate
+            break
 
     errors = []
     if not os.path.exists(path_manioc):
         errors.append(f"❌ Modèle Manioc introuvable : {path_manioc}")
-    if not os.path.exists(path_mais):
-        errors.append(f"❌ Modèle Maïs introuvable : {path_mais}")
+    if path_mais is None:
+        errors.append(
+            "❌ Modèle Maïs introuvable. Noms testés : " + ", ".join(maize_candidates)
+        )
     if errors:
         raise FileNotFoundError("\n".join(errors))
 
