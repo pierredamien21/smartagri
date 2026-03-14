@@ -184,7 +184,7 @@ def run_inference(image: Image.Image, crop: str, models: dict) -> dict:
     arr = np.expand_dims(np.array(img, dtype=np.float32) / 255.0, axis=0)
 
     model  = models[crop]
-    preds  = model.predict(arr, verbose=0)[0]
+    preds  = np.array(model(arr, training=False))[0]
     preds  = np.clip(preds, 0, 1)
     total  = preds.sum()
     if total > 0:
