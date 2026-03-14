@@ -2,3 +2,4 @@ streamlit
 numpy
 Pillow
 tensorflow
+streamlit>=1.41.0
