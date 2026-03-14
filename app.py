@@ -40,8 +40,8 @@ def load_models():
     if errors:
         raise FileNotFoundError("\n".join(errors))
 
-    model_manioc = tf.keras.models.load_model(path_manioc)
-    model_mais   = tf.keras.models.load_model(path_mais)
+    model_manioc = tf.keras.models.load_model(path_manioc, compile=False)
+    model_mais   = tf.keras.models.load_model(path_mais, compile=False)
     return {"manioc": model_manioc, "mais": model_mais}
 
 # ─────────────────────────────────────────────────────────────────────────────
