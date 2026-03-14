@@ -27,6 +27,7 @@ def load_models():
         cnn_simple_best.keras → Maïs
     """
     import keras
+    import tensorflow as tf
 
     base = os.path.dirname(os.path.abspath(__file__))
     path_manioc = os.path.join(base, "cnn_best.keras")
@@ -40,8 +41,31 @@ def load_models():
     if errors:
         raise FileNotFoundError("\n".join(errors))
 
-    model_manioc = keras.models.load_model(path_manioc, compile=False)
-    model_mais   = keras.models.load_model(path_mais, compile=False)
+    def _load_with_fallbacks(path: str):
+        """Try multiple loaders to survive minor Keras serialization differences."""
+        attempts = []
+
+        try:
+            return keras.models.load_model(path, compile=False)
+        except Exception as e:
+            attempts.append(f"keras safe_mode=True: {type(e).__name__}: {e}")
+
+        try:
+            return keras.models.load_model(path, compile=False, safe_mode=False)
+        except Exception as e:
+            attempts.append(f"keras safe_mode=False: {type(e).__name__}: {e}")
+
+        try:
+            return tf.keras.models.load_model(path, compile=False)
+        except Exception as e:
+            attempts.append(f"tf.keras: {type(e).__name__}: {e}")
+
+        raise TypeError(
+            "Impossible de charger le modele. Tentatives:\n- " + "\n- ".join(attempts)
+        )
+
+    model_manioc = _load_with_fallbacks(path_manioc)
+    model_mais = _load_with_fallbacks(path_mais)
     return {"manioc": model_manioc, "mais": model_mais}
 
 # ─────────────────────────────────────────────────────────────────────────────
