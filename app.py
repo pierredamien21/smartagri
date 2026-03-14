@@ -26,7 +26,7 @@ def load_models():
         cnn_best.keras        → Manioc
         cnn_simple_best.keras → Maïs
     """
-    import tensorflow as tf
+    import keras
 
     base = os.path.dirname(os.path.abspath(__file__))
     path_manioc = os.path.join(base, "cnn_best.keras")
@@ -40,8 +40,8 @@ def load_models():
     if errors:
         raise FileNotFoundError("\n".join(errors))
 
-    model_manioc = tf.keras.models.load_model(path_manioc, compile=False)
-    model_mais   = tf.keras.models.load_model(path_mais, compile=False)
+    model_manioc = keras.models.load_model(path_manioc, compile=False)
+    model_mais   = keras.models.load_model(path_mais, compile=False)
     return {"manioc": model_manioc, "mais": model_mais}
 
 # ─────────────────────────────────────────────────────────────────────────────
